@@ -42,6 +42,6 @@ int mostrarSubmenuListados(eProducto lista[], int length);
 int ordenarPorPrecio(eProducto lista[], int length, int ordenCreciente);
 int ordenarPorDescripcion(eProducto lista[], int length, int ordenCreciente);
 
-
+int hardcodearListado(eProducto lista[], int length);
 
 #endif // FUNCIONESABM_H_INCLUDED

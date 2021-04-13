@@ -73,7 +73,7 @@ int buscarLibre(eProducto lista[], int length)
 int mostrarMenu()
 {
     int a;
-    utn_getNumero(&a, "\n*Menu de opciones\n1-Alta producto\n2-Baja\n3-Modificacion\n4-Listados\n5-Informes varios\n6-Salir\n**ElijaOpcion: ", "\n**Error: elija una opcion valida\n", 1, 6, 3);
+    utn_getNumero(&a, "\n*Menu de opciones\n**9-Para Hardcodear Registros\n1-Alta producto\n2-Baja\n3-Modificacion\n4-Listados\n5-Informes varios\n6-Salir\n**ElijaOpcion: ", "\n**Error: elija una opcion valida\n", 1, 9, 3);
     return a;
 }
 
@@ -578,3 +578,48 @@ int mostrarSubmenuListados(eProducto lista[], int length)
 
     return 0;
 }
+
+
+/** \brief hardcodea hasta cinco(5) registros en un listado de eProductos
+ *
+ * \param lista[] eProducto donde hardcodear productos
+ * \param length int
+ * \return int
+ *
+ */
+int hardcodearListado(eProducto lista[], int length)
+{
+    int retorno;
+    int ids[5]={1,2,3,4,5};
+    char descripciones[5][20]= {"BlackIphone", "NewPinkEarBuds", "MegaIpad", "MacboockProAir", "GoldBatteryCharger"};
+    float precios[5]= {80720.1, 12700.99, 94000.1, 680000.0, 21000.6};
+    int codigosNacionalidades[5]= {11,11,12,11,10};
+    int codigoTipoProductos[5]= {70, 73, 72, 71, 73};
+
+    if(length>5)
+    {
+        for(int i=0; i<length; i++)
+        {
+            lista[i].id= ids[i];
+            strcpy(lista[i].descripcion, descripciones[i]);
+            lista[i].precio = precios[i];
+            lista[i].codigoNacionalidad= codigosNacionalidades[i];
+            lista[i].codigoTipo=codigoTipoProductos[i];
+        }
+        retorno=1;
+        printf("\n**se hardcodearon los registros.");
+        system("pause");
+    }else
+    {
+        printf("\nerror al hardcodear. Se solicito un hardcodeo mayor al tamanio del array.");
+        retorno=-1;
+    }
+
+    return retorno;
+}
+
+
+
+
+
+
