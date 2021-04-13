@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1618306287 source:c:\users\leonel\desktop\codeblocks-workspace\ejercicioinventarioapple\ejercicio9-1\funcionesabm.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"utn.h"
+
+1618306287 c:\users\leonel\desktop\codeblocks-workspace\ejercicioinventarioapple\ejercicio9-1\utn.h
+
+1618306287 source:c:\users\leonel\desktop\codeblocks-workspace\ejercicioinventarioapple\ejercicio9-1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"funcionesABM.h"
+
+1618306287 c:\users\leonel\desktop\codeblocks-workspace\ejercicioinventarioapple\ejercicio9-1\funcionesabm.h
+
