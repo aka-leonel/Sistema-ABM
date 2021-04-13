@@ -1,5 +1,22 @@
 #ifndef FUNCIONESABM_H_INCLUDED
 #define FUNCIONESABM_H_INCLUDED
+/*
+ALTA Producto: Se ingresan los datos de UN solo producto. Siempre y cuando haya espacio disponible en el array. Al momento de dar de alta el producto, el usuario podrá elegir el tipo de producto, de una lista que se le desplegará en pantalla.
+BAJA Producto: A partir del ingreso del ID. Si existe el producto desaparece de la lista, dejando espacio disponible para un nuevo producto.
+MODIFICACIÓN Producto: A partir del ingreso del ID. Si existe se podrá modificar el precio o el tipo. Si modifica el tipo de producto, se utilizara el mismo criterio que para dar de alta.
+LISTADOS:
+    LISTADO Productos.
+    LISTADO ordenado por precio.
+    LISTADO ordenado por descripción.
+
+Agregar los siguientes informes:
+El/los  productos más caros.
+Precio promedio por tipo de producto. Se deberá mostrar la descripción del tipo y a continuación el precio promedio.
+
+Se agregan los siguientes listados:
+El listado de todos los productos con la descripción del tipo.
+Por cada tipo la lista de productos.
+*/
 
 typedef struct
 {
@@ -44,4 +61,7 @@ int ordenarPorDescripcion(eProducto lista[], int length, int ordenCreciente);
 
 int hardcodearListado(eProducto lista[], int length);
 
+//menu de informes
+int mostrarSubmenuInformes(eProducto lista[], int length);
+int informarProductosMasCaros(eProducto lista[], int length);
 #endif // FUNCIONESABM_H_INCLUDED

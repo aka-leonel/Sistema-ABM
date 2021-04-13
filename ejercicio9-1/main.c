@@ -86,6 +86,9 @@ int main()
             printf("\n**Salir del programa**\n");
             system("pause");
             break;
+        case 7:
+            //informar el producto mas caro
+            break;
         case 9:
             hardcodearListado(listado, TAM);
             break;

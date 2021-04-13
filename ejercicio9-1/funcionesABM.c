@@ -73,7 +73,7 @@ int buscarLibre(eProducto lista[], int length)
 int mostrarMenu()
 {
     int a;
-    utn_getNumero(&a, "\n*Menu de opciones\n**9-Para Hardcodear Registros\n1-Alta producto\n2-Baja\n3-Modificacion\n4-Listados\n5-Informes varios\n6-Salir\n**ElijaOpcion: ", "\n**Error: elija una opcion valida\n", 1, 9, 3);
+    utn_getNumero(&a, "\n*Menu de opciones\n1-Alta producto\n2-Baja\n3-Modificacion\n4-Listados\n5-Informes\n6-Salir\n**9-Para Hardcodear Registros\n\n**Elija opcion: ", "\n**Error: elija una opcion valida\n", 1, 9, 3);
     return a;
 }
 
@@ -273,9 +273,10 @@ int mostrarProducto(eProducto x)
 
     if( pasarDeCodigoAPais(x.codigoNacionalidad, cadenaAuxiliarPais) && pasarDeCodigoATipoProducto(x.codigoNacionalidad, cadenaAuxiliarTipoProducto) )
     {
-        printf("\n%d -- %s -- %.1f -- %d -- %d", x.id, x.descripcion, x.precio, x.codigoTipo, x.codigoNacionalidad);
+        printf("\n%d -- %15s -- %.1f -- %d -- %d", x.id, x.descripcion, x.precio, x.codigoTipo, x.codigoNacionalidad);
         retorno=0;
-    }else
+    }
+    else
     {
         printf("\nWOW, sucedio algo inesperado\nSo, sad.\n");
         system("pause");
@@ -389,7 +390,7 @@ int modificarProducto(eProducto lista[], int length)
 
 int mostrarListadoDeProductos(eProducto lista[], int length)
 {
-    printf("\nID Descripcion Precio CodTipo CodPais");
+    printf("\nID   Descripcion     Precio CodTipo CodPais");
     for(int i=0; i<length; i++)
     {
         if (lista[i].id != -1)
@@ -397,6 +398,8 @@ int mostrarListadoDeProductos(eProducto lista[], int length)
             mostrarProducto(lista[i]);
         }
     }
+    printf("\n");
+    system("pause");
     return 0;
 }
 
@@ -584,13 +587,13 @@ int mostrarSubmenuListados(eProducto lista[], int length)
  *
  * \param lista[] eProducto donde hardcodear productos
  * \param length int
- * \return int
+ * \return retorna 1 si pudo hardcodear, else 0
  *
  */
 int hardcodearListado(eProducto lista[], int length)
 {
     int retorno;
-    int ids[5]={1,2,3,4,5};
+    int ids[5]= {1,2,3,4,5};
     char descripciones[5][20]= {"BlackIphone", "NewPinkEarBuds", "MegaIpad", "MacboockProAir", "GoldBatteryCharger"};
     float precios[5]= {80720.1, 12700.99, 94000.1, 680000.0, 21000.6};
     int codigosNacionalidades[5]= {11,11,12,11,10};
@@ -598,7 +601,7 @@ int hardcodearListado(eProducto lista[], int length)
 
     if(length>5)
     {
-        for(int i=0; i<length; i++)
+        for(int i=0; i<5; i++)
         {
             lista[i].id= ids[i];
             strcpy(lista[i].descripcion, descripciones[i]);
@@ -609,7 +612,8 @@ int hardcodearListado(eProducto lista[], int length)
         retorno=1;
         printf("\n**se hardcodearon los registros.");
         system("pause");
-    }else
+    }
+    else
     {
         printf("\nerror al hardcodear. Se solicito un hardcodeo mayor al tamanio del array.");
         retorno=-1;
@@ -620,6 +624,85 @@ int hardcodearListado(eProducto lista[], int length)
 
 
 
+/** \brief informa el/los producto/s mas caro/s
+ *
+ * \param lista[] eProducto
+ * \param length int
+ * \return int
+ *
+ */
+int informarProductosMasCaros(eProducto lista[], int length)
+{
+    int indiceDelMasCaro;//
+    int cantidadDeMaximos=0;//en caso de haber mas de un producto con el precio maximo, se contara
 
+
+    for(int i=0; i<length; i++)
+    {
+        if(lista[i].id != -1)//si tiene un producto cargado
+        {
+            if( i==0 || lista[i].precio > lista[indiceDelMasCaro].precio)
+            {
+                indiceDelMasCaro = i;
+            }
+        }
+    }
+    //y si no es mayor sino que igual?
+    //recorrere el vector en contando precios equivalentes
+    for(int i=0; i<length; i++)
+    {
+        if(lista[i].precio == lista[indiceDelMasCaro].precio)
+        {
+            cantidadDeMaximos++;
+        }
+    }
+    //bien, ya sé cuantos maximos tengo
+    //if uno, muestro uno, if muchos limprimo en pantalla tambien
+    if(cantidadDeMaximos==1)
+    {
+        //muestro normal
+        printf("\n**El producto mas caro hallado fue:\n");
+        mostrarProducto(lista[indiceDelMasCaro]);
+        system("pause");
+    }
+    else
+    {
+        printf("\n**Se hallO mAs de un producto con el precio mAximo\n.");
+        for(int i=0; i<length; i++)
+        {
+            if(lista[i].precio == lista[indiceDelMasCaro].precio)
+            {
+                mostrarProducto(lista[i]);
+            }
+        }
+    }
+
+}
+
+/** \brief
+ *
+ * \param lista[] eProducto
+ * \param length int
+ * \return int
+ *
+ */
+int mostrarSubmenuInformes(eProducto lista[], int length)
+{
+    int opcion;
+    //int subopcion;
+
+    utn_getNumero(&opcion, "\n**Submenu de informes\n\n1-Informar el/los producto/s mas caro/s\n2-Precio promedio por tipo de producto\n3-Salir\nOpcion: ", "\n**ERROR: elija una opcion valida\n", 1, 3, 3);
+    switch(opcion)
+    {
+    case 1:
+        //informar mas caro
+        break;
+    case 2:
+        //precios promedio x tipo
+        break;
+    }
+
+    return 0;
+}
 
 

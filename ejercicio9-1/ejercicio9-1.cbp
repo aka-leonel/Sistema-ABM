@@ -31,9 +31,17 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="funcionesABM.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="funcionesABM.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="utn.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="utn.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
