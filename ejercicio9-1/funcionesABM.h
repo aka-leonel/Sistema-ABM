@@ -70,5 +70,7 @@ int informarProductosMasCaros(eProducto lista[], int length);
 int contarPorTipo(eProducto lista[], int length);
 int informarPrecioPromedioPorTipo(eProducto lista[], int length);
 
+int mostrarOrdenadoPorTipo(eProducto lista[], int length);
+int ordenarListaPorTipo(eProducto lista[], int length);
 
 #endif // FUNCIONESABM_H_INCLUDED

@@ -259,6 +259,7 @@ int pasarDeCodigoATipoProducto(int codigoRecibido, char* pResultado)
             break;
         default:
             strcpy(pResultado, "ERROR 251");
+            printf("\n**DEBUG: codigo recibido %d", codigoRecibido);
             retorno=-1;
         }
     }
@@ -275,9 +276,9 @@ int mostrarProducto(eProducto x)
     char cadenaAuxiliarPais[64]; //sirven para el intercambio de codigo pais/tipoProducto por su desripcion
     char cadenaAuxiliarTipoProducto[64];
 
-    if( pasarDeCodigoAPais(x.codigoNacionalidad, cadenaAuxiliarPais) && pasarDeCodigoATipoProducto(x.codigoNacionalidad, cadenaAuxiliarTipoProducto) )
+    if( pasarDeCodigoAPais(x.codigoNacionalidad, cadenaAuxiliarPais) && pasarDeCodigoATipoProducto(x.codigoTipo, cadenaAuxiliarTipoProducto) )
     {
-        printf("\n%d -- %15s -- %.1f -- %d -- %d", x.id, x.descripcion, x.precio, x.codigoTipo, x.codigoNacionalidad);
+        printf("\n%d -- %20s -- %8.1f -- %10s -- %8s", x.id, x.descripcion, x.precio, cadenaAuxiliarTipoProducto, cadenaAuxiliarPais);
         retorno=0;
     }
     else
@@ -403,7 +404,7 @@ int mostrarListadoDeProductos(eProducto lista[], int length)
         {
             if(bandera==0)
             {
-                printf("\nID   Descripcion     Precio CodTipo CodPais");
+                printf("\nID   Descripcion              Precio    Tipo  PaisDeOrigen");
                 bandera=1;
             }
 
@@ -547,59 +548,6 @@ int ordenarPorDescripcion(eProducto lista[], int length, int ordenCreciente)
     return retorno;
 }
 
-/** \brief
- *
- * \return 0
- *
- */
-int mostrarSubmenuListados(eProducto lista[], int length)
-{
-    int opcion;
-    int subopcion;
-
-    utn_getNumero(&opcion, "\n**Submenu de listado\n1-Listar productos\n2-Listar ordenado por precio\n3-Listar ordenado por descripcion\n4-Salir\nOpcion: ", "\n**ERROR: elija una opcion valida\n", 1, 4, 3);
-    switch(opcion)
-    {
-    case 1:
-        //listado normal
-        mostrarListadoDeProductos(lista, length);
-        break;
-    case 2:
-        //listar Ordenador x precio
-        utn_getNumero(&subopcion, "\n**2-Listar ordenado por precio.\nIngrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
-        if ( ordenarPorPrecio(lista, length, subopcion) )
-        {
-            printf("\n**Se ordeno el listado por precio");
-            system("pause");
-            mostrarListadoDeProductos(lista, length);
-        }
-        else
-        {
-            printf("\n**NO Se ordeno el listado\n");
-            system("pause");
-        }
-        break;
-    case 3:
-        //listar Ordenado x Descripciones
-        utn_getNumero(&subopcion, "\n**Ordenar por descripcion. Ingrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
-        if ( ordenarPorDescripcion(lista, length, subopcion) )
-        {
-            printf("\n**Se ordeno el listado por descripcion");
-            system("pause");
-        }
-        else
-        {
-            printf("\n**NO Se ordeno el listado\n");
-            system("pause");
-        }
-        break;
-    case 4:
-        break;
-    }
-
-    return 0;
-}
-
 
 /** \brief hardcodea hasta cinco(5) registros en un listado de eProductos
  *
@@ -637,7 +585,7 @@ int hardcodearListado(eProducto lista[], int length)
         system("pause");
         retorno=-1;
     }
-system("cls");
+    system("cls");
     return retorno;
 }
 
@@ -732,7 +680,7 @@ int informarPrecioPromedioPorTipo(eProducto lista[], int length)
     char tipos[5][21]= {"Iphone", "Mac", "Ipad","accesorios", "desconocido"};
     int contadores[5]= {0,0,0,0,0};
     float acumuladores[5]= {0,0,0,0,0};
-    float preciosPromedio[5]={-1,-1,-1,-1,-1};
+    float preciosPromedio[5]= {-1,-1,-1,-1,-1};
 
     /*ayuda memoria
     #define IPHONE 70
@@ -787,7 +735,8 @@ int informarPrecioPromedioPorTipo(eProducto lista[], int length)
         if(preciosPromedio[i]==-1)
         {
             printf("\nNo hay productos del tipo %s", tipos[i]);
-        }else
+        }
+        else
         {
             printf("\nEl precio promedio de producto tipo %s es %.1f ", tipos[i], preciosPromedio[i]);
         }
@@ -835,4 +784,115 @@ int mostrarSubmenuInformes(eProducto lista[], int length)
     return 0;
 }
 
+
+
+/** \brief
+ *
+ * \param lista[] eProducto
+ * \param length int
+ * \return int
+ *
+ */
+int ordenarListaPorTipo(eProducto lista[], int length)
+{
+    eProducto auxiliar;
+
+    for(int i=0; i<length-1; i++)
+    {
+        for(int j=i+1; j<length; j++)
+        {
+            if(lista[i].id != -1 && lista[j].id != -1)
+            {
+                if (lista[i].codigoTipo > lista[j].codigoTipo)
+                {
+                    //hacer intercambio
+                    auxiliar.id = lista[i].id;
+                    strcpy(auxiliar.descripcion, lista[i].descripcion);
+                    auxiliar.precio = lista[i].precio;
+                    auxiliar.codigoTipo = lista[i].codigoTipo;
+                    auxiliar.codigoNacionalidad = lista[i].codigoNacionalidad;
+
+                    lista[i].id = lista[j].id;
+                    strcpy(lista[i].descripcion, lista[j].descripcion);
+                    lista[i].precio = lista[j].precio;
+                    lista[i].codigoTipo = lista[j].codigoTipo;
+                    lista[i].codigoNacionalidad = lista[j].codigoNacionalidad;
+
+                    lista[j].id = auxiliar.id;
+                    strcpy(lista[j].descripcion, auxiliar.descripcion);
+                    lista[j].precio = auxiliar.precio;
+                    lista[j].codigoTipo = auxiliar.codigoTipo;
+                    lista[j].codigoNacionalidad = auxiliar.codigoNacionalidad;
+
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int mostrarOrdenadoPorTipo(eProducto lista[], int length)
+{
+    ordenarListaPorTipo(lista, length);
+    mostrarListadoDeProductos(lista, length);
+    return 0;
+}
+
+
+/** \brief
+ *
+ * \return 0
+ *
+ */
+int mostrarSubmenuListados(eProducto lista[], int length)
+{
+    int opcion;
+    int subopcion;
+
+    utn_getNumero(&opcion, "\n**Submenu de listado\n1-Listar productos\n2-Listar ordenado por precio\n3-Listar ordenado por descripcion\n4-Listar Ordenado por tipo producto\n5-Salir\nOpcion: ", "\n**ERROR: elija una opcion valida\n", 1, 5, 3);
+    switch(opcion)
+    {
+    case 1:
+        //listado normal
+        mostrarListadoDeProductos(lista, length);
+        break;
+    case 2:
+        //listar Ordenador x precio
+        utn_getNumero(&subopcion, "\n**2-Listar ordenado por precio.\nIngrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
+        if ( ordenarPorPrecio(lista, length, subopcion) )
+        {
+            printf("\n**Se ordeno el listado por precio");
+            system("pause");
+            mostrarListadoDeProductos(lista, length);
+        }
+        else
+        {
+            printf("\n**NO Se ordeno el listado\n");
+            system("pause");
+        }
+        break;
+    case 3:
+        //listar Ordenado x Descripciones
+        utn_getNumero(&subopcion, "\n**Ordenar por descripcion. Ingrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
+        if ( ordenarPorDescripcion(lista, length, subopcion) )
+        {
+            printf("\n**Se ordeno el listado por descripcion");
+            system("pause");
+            mostrarListadoDeProductos(lista, length);
+        }
+        else
+        {
+            printf("\n**NO Se ordeno el listado\n");
+            system("pause");
+        }
+        break;
+    case 4:
+        mostrarOrdenadoPorTipo(lista, length);
+        break;
+    case 5:
+        break;
+    }
+
+    return 0;
+}
 
