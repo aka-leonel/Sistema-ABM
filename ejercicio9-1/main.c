@@ -65,29 +65,35 @@ int main()
         {
         case 1:
             //alta
+            system("cls");
             altaProducto(listado, TAM);
             break;
         case 2:
             //baja
+            system("cls");
             bajaProducto(listado, TAM);
             break;
         case 3:
             //modificacion
+            system("cls");
             modificarProducto(listado, TAM);
             break;
         case 4:
             //listados
+            system("cls");
             mostrarSubmenuListados(listado, TAM);
             break;
         case 5:
             //informar mas caro/s, informar precio promedio
+            system("cls");
+            mostrarSubmenuInformes(listado, TAM);
+
             break;
         case 6:
             printf("\n**Salir del programa**\n");
-            system("pause");
             break;
         case 7:
-            //informar el producto mas caro
+
             break;
         case 9:
             hardcodearListado(listado, TAM);

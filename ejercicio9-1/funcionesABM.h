@@ -64,4 +64,11 @@ int hardcodearListado(eProducto lista[], int length);
 //menu de informes
 int mostrarSubmenuInformes(eProducto lista[], int length);
 int informarProductosMasCaros(eProducto lista[], int length);
+
+
+
+int contarPorTipo(eProducto lista[], int length);
+int informarPrecioPromedioPorTipo(eProducto lista[], int length);
+
+
 #endif // FUNCIONESABM_H_INCLUDED
