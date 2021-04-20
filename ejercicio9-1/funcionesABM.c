@@ -4,20 +4,33 @@
 #include "utn.h"
 
 //define codigoNacionalidad
-#define EEUU 10
-#define CHINA 11
-#define OTRO 12
+#define EEUU 1
+#define CHINA 2
+#define OTRO 3
 //define codigoTipo
-#define IPHONE 70
-#define MAC 71
-#define IPAD 72
-#define ACCESORIOS 73
+#define IPHONE 1000
+#define IPAD 1001
+#define MAC 1002
+#define ACCESORIOS 1003
 //define el primer id
 #define PRIMERID 1
-#define ULTIMOID 99999//vergonzoso define solo para que bajaProducto quede bien
+#define ULTIMOID 99999//es un define casi inutil, solo lo usa la funcion dar de baja
 //precio min y maximo deberan adaptarse si surgieren productos cuyo precio rebase los limites
 #define PRECIOMINIMO 0.1
 #define PRECIOMAXIMO 9999999.0
+
+
+typedef struct
+{
+    int idTipo;
+    char descripcionTipo[64];
+} eTipoProducto;
+
+typedef struct
+{
+    int idNacionalidad;
+    char descripcionNacionalidad[64];
+} eNacionalidad;
 
 typedef struct
 {
@@ -34,16 +47,81 @@ typedef struct
  *
  * \param listado a inicilizar
  * \param longitud listado
- * \return retorna 0 siempre
+ * \return retorna 0(exito), -1(error) para puntero nulo or length<1
  *
  */
-int inicializarListado(eProducto lista[], int length)
+int inicializarListadoProductos(eProducto lista[], int length)
 {
-    for(int i=0; i<length; i++)
+    int retorno=-1;//pesimista
+
+    if(lista!=NULL && length>0)
     {
-        lista[i].id=-1;
+        for(int i=0; i<length; i++)
+        {
+            lista[i].id=-1;
+        }
+        retorno=0;
     }
-    return 0;
+    else
+    {
+        printf("\n**ERROR: listaProductos==NULL || length<1\n");
+        system("pause");
+    }
+
+    return retorno;
+}
+
+
+/** \brief recibe un listado de tipos, y lo incializa: coloca todos sus ids=-1
+ *
+ * \param listaTipos[] eTipoProducto
+ * \param length int tamanio del listado
+ * \return int retorna 0(exito), -1(fracaso)por puntero nulo o lenght invalido
+ *
+ */
+int inicializarListadoTipos(eTipoProducto listaTipos[], int length)
+{
+    int retorno=-1;//pesimista
+    if(listaTipos!=NULL && length>0)
+    {
+        for(int i=0; i<length; i++)
+        {
+            listaTipos[i].idTipo=-1;//es decir está el espacio disponible
+        }
+        retorno=0;
+    }
+    else
+    {
+        printf("\n**ERROR: listaTipos==NULL || length<1\n");
+        system("pause");
+    }
+    return retorno;
+}
+
+/** \brief recibe un array de eNaionalidades y pone todos sus id=-1
+ *
+ * \param listaNaciones[] eNacionalidad
+ * \param length int
+ * \return int retorna 0(exito), -1(fracaso)por puntero nulo o lenght invalido
+ *
+ */
+int inicializarListadoNaciones(eNacionalidad listaNaciones[], int length)
+{
+    int retorno=-1;//pesimista
+    if(listaNaciones!=NULL && length>0)
+    {
+        for(int i=0; i<length; i++)
+        {
+            listaNaciones[i].idNacionalidad=-1;//es decir está el espacio disponible
+        }
+        retorno=0;
+    }
+    else
+    {
+        printf("\n**ERROR: listaNaciones==NULL || length<1\n");
+        system("pause");
+    }
+    return retorno;
 }
 
 
@@ -150,11 +228,11 @@ int elegirTipoDeProducto()
  * \return 1 en caso de carga exitosa, -1 si no hay lugar, 0 error desconocido o.O
  *
  */
-int altaProducto(eProducto lista[], int length)
+int altaProducto(eProducto lista[], int length, int* nextId)
 {
     int retorno=0;
     int indiceLibre;
-    int banderaIdRepetido;
+    //int banderaIdRepetido;--no se usa ahora que id es automatico
     eProducto auxiliar;//ahi se cargarán los datos, luego de ciertas validaciones se copiara al indice libre
 
     indiceLibre= buscarLibre(lista, length);//busco lugar libre
@@ -167,12 +245,13 @@ int altaProducto(eProducto lista[], int length)
     }
     else  //hay lugar, proceder a carga
     {
-        do//pedir id: REVISAR QUE NO SEA ID REPETIDO buscarId(eProducto lista[], int length)
+        /*do//pedir id: REVISAR QUE NO SEA ID REPETIDO buscarId(eProducto lista[], int length)
         {
             utn_getNumero(&auxiliar.id, "\nIngrese ID producto (es clave primaria): ", "\n***Error: id fuera de rango", PRIMERID, PRIMERID+1000, 3);
             banderaIdRepetido = buscarId(lista, length, auxiliar.id);
         }
-        while(banderaIdRepetido!=-1);
+        while(banderaIdRepetido!=-1);*/
+        auxiliar.id=*nextId;//copio el nextId recibido como parametro
 
         //pedir descripcion producto
         utn_getTexto(auxiliar.descripcion, 64, "\nDescripcion: ");
@@ -187,6 +266,7 @@ int altaProducto(eProducto lista[], int length)
 
         lista[indiceLibre] = auxiliar;
         retorno=1;
+        *nextId= *nextId+1;
         printf("\n**Se cargo correctamente el item %s\n", lista[indiceLibre].descripcion);
         system("pause");
     }
@@ -278,7 +358,7 @@ int mostrarProducto(eProducto x)
 
     if( pasarDeCodigoAPais(x.codigoNacionalidad, cadenaAuxiliarPais) && pasarDeCodigoATipoProducto(x.codigoTipo, cadenaAuxiliarTipoProducto) )
     {
-        printf("\n%d -- %20s -- %8.1f -- %10s -- %8s", x.id, x.descripcion, x.precio, cadenaAuxiliarTipoProducto, cadenaAuxiliarPais);
+        printf("\n%d -- %15s -- %8.1f -- %10s -- %8s", x.id, x.descripcion, x.precio, cadenaAuxiliarTipoProducto, cadenaAuxiliarPais);
         retorno=0;
     }
     else
@@ -315,7 +395,8 @@ int bajaProducto(eProducto lista[], int length)
     indiceParaBajar = buscarId(lista, length, idParaBajar);
     if(indiceParaBajar==-1)
     {
-        printf("\n**ID:%d inexistente.", idParaBajar);
+        printf("\n**El Id ingresado es inexistente.");
+        system("pause");
     }
     else
     {
@@ -344,19 +425,20 @@ int bajaProducto(eProducto lista[], int length)
 
 int modificarProducto(eProducto lista[], int length)
 {
-    int retorno;
+    int retorno=0;
     int idProducto;
     int indiceProducto;//producto a modificar
     char confirmacion='n';
+    int opcion;
 
     printf("\n**MODIFICAR PRODUCTO\n");
     utn_getNumero(&idProducto, "\nIngrese id del producto a modificar: ", "\nError: fuera de rango\n", PRIMERID, ULTIMOID, 3);
-
+//mostrar listado con ids y descripciones
     indiceProducto = buscarId(lista, length, idProducto);
     if(indiceProducto ==-1)
     {
-        printf("\n**No existe el Id %d", idProducto);
-        retorno = 0;
+        printf("\n**No existe el Id %d. Operacion cancelada\n", idProducto);
+        system("pause");
     }
     else
     {
@@ -366,20 +448,33 @@ int modificarProducto(eProducto lista[], int length)
 
         if(confirmacion=='s')
         {
+            //solo ese podra modificar el precio y el tipoProducto
 
-            //pedir descripcion producto
-            utn_getTexto(lista[indiceProducto].descripcion, 64, "\nDescripcion: ");
+            //NO SE USA MASpedir descripcion producto
+            //utn_getTexto(lista[indiceProducto].descripcion, 64, "\nDescripcion: ");
+            //NO SE USA MASmostrar y elegirir codigo pais de origen
+            //lista[indiceProducto].codigoNacionalidad = elegirPaisDeOirigen();
 
-            //mostrar y elegirir codigo pais de origen
-            lista[indiceProducto].codigoNacionalidad = elegirPaisDeOirigen();
+            do
+            {
+                utn_getNumero(&opcion, "\n1-Modificar precio\n2-Modificar tipo de producto\n3-Salir\n**Elija opcion: ", "\nError, opcion incorrecta\n", 1, 3, 3);
+
+                switch(opcion)
+                {
+                case 1:
+                    utn_getNumeroReal(&lista[indiceProducto].precio, "\nIngrese el precio del producto: ", "\nError, elija un valor válido", PRECIOMINIMO, PRECIOMAXIMO, 3);
+                    retorno=1;
+                    break;
+                case 2:
+                    //mostrar y elegir codigo de tipo de producto
+                    lista[indiceProducto].codigoTipo= elegirTipoDeProducto();
+                    retorno=1;
+                    break;
+                }
+            }
+            while(opcion!=3);
 
 
-            //mostrar y elegir codigo de tipo de producto
-            lista[indiceProducto].codigoTipo= elegirTipoDeProducto();
-
-            utn_getNumeroReal(&lista[indiceProducto].precio, "\nIngrese el precio del producto: ", "\nError, elija un valor válido", PRECIOMINIMO, PRECIOMAXIMO, 3);
-
-            retorno=1;
         }
         else
         {
@@ -404,7 +499,7 @@ int mostrarListadoDeProductos(eProducto lista[], int length)
         {
             if(bandera==0)
             {
-                printf("\nID   Descripcion              Precio    Tipo  PaisDeOrigen");
+                printf("\nID   Descripcion          Precio       Tipo      PaisDeOrigen");
                 bandera=1;
             }
 
@@ -458,6 +553,7 @@ int ordenarPorPrecio(eProducto lista[], int length, int ordenCreciente)
                 }
             }
         }
+        printf("\n**Se ordeno de forma creciente segun precio.\n");
         retorno = 1;
 
     }
@@ -556,24 +652,29 @@ int ordenarPorDescripcion(eProducto lista[], int length, int ordenCreciente)
  * \return retorna 1 si pudo hardcodear, else 0
  *
  */
-int hardcodearListado(eProducto lista[], int length)
+int hardcodearListado(eProducto lista[], int length, int* nextId)
 {
     int retorno;
-    int ids[5]= {1,2,3,4,5};
-    char descripciones[5][20]= {"BlackIphone", "NewPinkEarBuds", "MegaIpad", "MacboockProAir", "GoldBatteryCharger"};
+    // int ids[5]= {1,2,3,4,5}; HACERLO AUTOMATICO AMIWI
+    /* IPHONE 1000
+    #define IPAD 1001
+    #define MAC 1002
+    #define ACCESORIOS 1003*/
+    char descripciones[5][20]= {"BlackIphone", "NewPinkEarBuds", "MegaIpad", "MacboockProAir", "BatteryCharger"};
     float precios[5]= {80720.1, 12700.99, 94000.1, 680000.0, 21000.6};
-    int codigosNacionalidades[5]= {11,11,12,11,10};
-    int codigoTipoProductos[5]= {70, 73, 72, 71, 73};
+    int codigosNacionalidades[5]= {EEUU,CHINA,OTRO,CHINA,EEUU};
+    int codigoTipoProductos[5]= {IPHONE,ACCESORIOS,IPAD,MAC,ACCESORIOS};
 
     if(length>5)
     {
         for(int i=0; i<5; i++)
         {
-            lista[i].id= ids[i];
+            lista[i].id= *nextId;
             strcpy(lista[i].descripcion, descripciones[i]);
             lista[i].precio = precios[i];
             lista[i].codigoNacionalidad= codigosNacionalidades[i];
             lista[i].codigoTipo=codigoTipoProductos[i];
+            *nextId= *nextId+1;
         }
         retorno=1;
         printf("\n**se hardcodearon los registros.");
@@ -600,65 +701,75 @@ int hardcodearListado(eProducto lista[], int length)
  */
 int informarProductosMasCaros(eProducto lista[], int length)
 {
+    int retorno=-1;
     int indiceDelMasCaro=-1;//
     int cantidadDeMaximos=0;//en caso de haber mas de un producto con el precio maximo, se contara
 
     system("cls");
 
-    for(int i=0; i<length; i++)
-    {
-        if(lista[i].id != -1)//si tiene un producto cargado
-        {
-            if( indiceDelMasCaro==-1 || lista[i].precio > lista[indiceDelMasCaro].precio)
-            {
-                indiceDelMasCaro = i;
-            }
-        }
-    }
-    //y si no es mayor sino que igual?
-    //recorrere el vector en contando precios equivalentes
-    if(indiceDelMasCaro != -1)
+    if(lista!=NULL && length>0)
     {
         for(int i=0; i<length; i++)
         {
-            if(lista[i].id != -1)
+            if(lista[i].id != -1)//si tiene un producto cargado
+            {
+                if( indiceDelMasCaro==-1 || lista[i].precio > lista[indiceDelMasCaro].precio)
+                {
+                    indiceDelMasCaro = i;
+                }
+            }
+        }
+        //y si no es mayor sino que igual?
+        //recorrere el vector contando precios equivalentes
+        if(indiceDelMasCaro != -1)
+        {
+            for(int i=0; i<length; i++)
+            {
+                if(lista[i].id != -1)
+                {
+                    if(lista[i].precio == lista[indiceDelMasCaro].precio)
+                    {
+                        cantidadDeMaximos++;
+                    }
+                }
+            }
+        }
+
+        //bien, ya sé cuantos maximos tengo
+        //if uno, muestro uno, if muchos los imprimo en pantalla tambien
+        if(cantidadDeMaximos==0)
+        {
+            printf("\n**La lista estaba vacia\n");
+        }
+        else if (cantidadDeMaximos==1)
+        {
+            //muestro normal
+            printf("\n**El producto mas caro hallado fue:\n");
+            mostrarProducto(lista[indiceDelMasCaro]);
+
+        }
+        else
+        {
+            printf("\n**Se hallO mAs de un producto con el precio mAximo\n.");
+            for(int i=0; i<length; i++)
             {
                 if(lista[i].precio == lista[indiceDelMasCaro].precio)
                 {
-                    cantidadDeMaximos++;
+                    mostrarProducto(lista[i]);
                 }
             }
         }
     }
-
-    //bien, ya sé cuantos maximos tengo
-    //if uno, muestro uno, if muchos limprimo en pantalla tambien
-    if(cantidadDeMaximos==0)
-    {
-        printf("\n**La lista estaba vacia\n");
-    }
-    else if (cantidadDeMaximos==1)
-    {
-        //muestro normal
-        printf("\n**El producto mas caro hallado fue:\n");
-        mostrarProducto(lista[indiceDelMasCaro]);
-
-    }
     else
     {
-        printf("\n**Se hallO mAs de un producto con el precio mAximo\n.");
-        for(int i=0; i<length; i++)
-        {
-            if(lista[i].precio == lista[indiceDelMasCaro].precio)
-            {
-                mostrarProducto(lista[i]);
-            }
-        }
+        printf("\n**ERROR: lista == NULL || length < 1\n");
+        system("pause");
     }
+
 
     system("pause");
 
-    return 0;
+    return retorno;
 
 }
 
@@ -674,20 +785,21 @@ int informarProductosMasCaros(eProducto lista[], int length)
  */
 int informarPrecioPromedioPorTipo(eProducto lista[], int length)
 {
-    /*estructura de mi matriz
-    int contadorIphone contadorMac contadorIpad contadorAccesorios contadorDesconocidos
-    float acumuladorIphone       acuMac      acuIpad         acuAccesorios   acuDesconocidos */
-    char tipos[5][21]= {"Iphone", "Mac", "Ipad","accesorios", "desconocido"};
+    /*estructura de mis arrays paralelos
+    int contadorIphone contadorIpad contadorMac  contadorAccesorios contadorDesconocidos
+    float acumuladorIphone    acuIpad    acuMac    acuAccesorios   acuDesconocidos */
+    char tipos[5][21]= {"Iphone", "Ipad", "Mac","Accesorios", "desconocido"};
     int contadores[5]= {0,0,0,0,0};
     float acumuladores[5]= {0,0,0,0,0};
     float preciosPromedio[5]= {-1,-1,-1,-1,-1};
 
     /*ayuda memoria
-    #define IPHONE 70
-    #define MAC 71
-    #define IPAD 72
-    #define ACCESORIOS 73
-    noHayDefine de Desconocidos
+    //define codigoTipo
+    #define IPHONE 1000
+    #define IPAD 1001
+    #define MAC 1002
+    #define ACCESORIOS 1003
+    noHayDefine para desconocidos
     */
     //primer for para cargar contador y acumulador
     for(int i=0; i<length; i++)
@@ -697,19 +809,19 @@ int informarPrecioPromedioPorTipo(eProducto lista[], int length)
 
             switch(lista[i].codigoTipo)
             {
-            case 70:
+            case IPHONE:
                 contadores[0]++;
                 acumuladores[0]+=lista[i].precio;
                 break;
-            case 71:
+            case IPAD:
                 contadores[1]++;
                 acumuladores[1]+=lista[i].precio;
                 break;
-            case 72:
+            case MAC:
                 contadores[2]++;
                 acumuladores[2]+=lista[i].precio;
                 break;
-            case 73:
+            case ACCESORIOS:
                 contadores[3]++;
                 acumuladores[3]+=lista[i].precio;
                 break;
@@ -746,9 +858,6 @@ int informarPrecioPromedioPorTipo(eProducto lista[], int length)
 
 }
 
-
-
-
 /** \brief
  *
  * \param lista[] eProducto
@@ -761,10 +870,10 @@ int mostrarSubmenuInformes(eProducto lista[], int length)
     int opcion;
 
 
-    while(opcion!=3)
+    do
     {
         system("cls");
-        utn_getNumero(&opcion, "\n**Submenu de informes\n\n1-Informar el/los producto/s mas caro/s\n2-Informar precio promedio por tipo de producto\n3-Salir\nOpcion: ", "\n**ERROR: elija una opcion valida\n", 1, 3, 3);
+        utn_getNumero(&opcion, "\n**Submenu de informes\n\n1-Informar el/los producto/s mas caro/s\n2-Informar precio promedio por tipo de producto\n3-Informar el tipo de producto más producido\n4-Salir\nOpcion: ", "\n**ERROR: elija una opcion valida\n", 1, 4, 3);
         switch(opcion)
         {
         case 1:
@@ -777,8 +886,13 @@ int mostrarSubmenuInformes(eProducto lista[], int length)
             system("cls");
             informarPrecioPromedioPorTipo(lista, length);
             break;
+        case 3:
+            //Informar el tipo de producto más producido
+            //informarTipoProductoMasElaborado(lista, length);
+            break;
         }
     }
+    while(opcion!=4);
 
 
     return 0;
@@ -825,6 +939,30 @@ int ordenarListaPorTipo(eProducto lista[], int length)
                     lista[j].codigoNacionalidad = auxiliar.codigoNacionalidad;
 
                 }
+                else if(lista[i].codigoTipo == lista[j].codigoTipo) //si son mismo tipo, ordena por descripcion
+                {
+                    if(strcmp(lista[i].descripcion, lista[j].descripcion)>0)
+                    {
+                        //hacer intercambio
+                        auxiliar.id = lista[i].id;
+                        strcpy(auxiliar.descripcion, lista[i].descripcion);
+                        auxiliar.precio = lista[i].precio;
+                        auxiliar.codigoTipo = lista[i].codigoTipo;
+                        auxiliar.codigoNacionalidad = lista[i].codigoNacionalidad;
+
+                        lista[i].id = lista[j].id;
+                        strcpy(lista[i].descripcion, lista[j].descripcion);
+                        lista[i].precio = lista[j].precio;
+                        lista[i].codigoTipo = lista[j].codigoTipo;
+                        lista[i].codigoNacionalidad = lista[j].codigoNacionalidad;
+
+                        lista[j].id = auxiliar.id;
+                        strcpy(lista[j].descripcion, auxiliar.descripcion);
+                        lista[j].precio = auxiliar.precio;
+                        lista[j].codigoTipo = auxiliar.codigoTipo;
+                        lista[j].codigoNacionalidad = auxiliar.codigoNacionalidad;
+                    }
+                }
             }
         }
     }
@@ -857,13 +995,16 @@ int mostrarSubmenuListados(eProducto lista[], int length)
         mostrarListadoDeProductos(lista, length);
         break;
     case 2:
-        //listar Ordenador x precio
-        utn_getNumero(&subopcion, "\n**2-Listar ordenado por precio.\nIngrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
-        if ( ordenarPorPrecio(lista, length, subopcion) )
+        //listar Ordenado x precio
+        utn_getNumero(&subopcion, "\n**Opcion: Listar ordenado por precio.\nIngrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
+        if(subopcion ==0 || subopcion==1)
         {
-            printf("\n**Se ordeno el listado por precio");
-            system("pause");
-            mostrarListadoDeProductos(lista, length);
+            if ( ordenarPorPrecio(lista, length, subopcion) )
+            {
+                printf("\n**Se ordeno el listado por precio");
+                system("pause");
+                mostrarListadoDeProductos(lista, length);
+            }
         }
         else
         {
@@ -874,12 +1015,16 @@ int mostrarSubmenuListados(eProducto lista[], int length)
     case 3:
         //listar Ordenado x Descripciones
         utn_getNumero(&subopcion, "\n**Ordenar por descripcion. Ingrese 1 para orden creciente, 0 para orden decreciente: ", "\n**Error: valor invalido\n", 0, 1, 3);
-        if ( ordenarPorDescripcion(lista, length, subopcion) )
+        if(subopcion ==1 || subopcion==0)
         {
-            printf("\n**Se ordeno el listado por descripcion");
-            system("pause");
-            mostrarListadoDeProductos(lista, length);
+            if ( ordenarPorDescripcion(lista, length, subopcion) )
+            {
+                printf("\n**Se ordeno el listado por descripcion");
+                system("pause");
+                mostrarListadoDeProductos(lista, length);
+            }
         }
+
         else
         {
             printf("\n**NO Se ordeno el listado\n");

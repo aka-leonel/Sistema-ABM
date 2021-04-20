@@ -18,6 +18,21 @@ El listado de todos los productos con la descripción del tipo.
 Por cada tipo la lista de productos.
 */
 
+
+typedef struct
+{
+    int idTipo;
+    char descripcionTipo[64];
+}eTipoProducto;
+
+
+typedef struct
+{
+    int idNacionalidad;
+    char descripcionNacionalidad[64];
+}eNacionalidad;
+
+
 typedef struct
 {
     int id;     //if id==-1 --> IS EMPTY
@@ -27,9 +42,13 @@ typedef struct
     float precio;
 } eProducto;
 
-int inicializarListado(eProducto lista[], int length);
-int mostrarMenu();
 
+int inicializarListadoProductos(eProducto lista[], int length);
+int inicializarListadoTipos(eTipoProducto listaTipos[], int length);
+int inicializarListadoNaciones(eNacionalidad listaNaciones[], int length);
+
+int hardcodearListado(eProducto lista[], int length, int* nextId);
+int mostrarMenu();
 
 int mostrarProducto(eProducto x);
 int mostrarListadoDeProductos(eProducto lista[], int length);
@@ -38,13 +57,12 @@ int mostrarListadoDeProductos(eProducto lista[], int length);
 int pasarDeCodigoAPais(int codigoRecibido, char* pResultado);
 int pasarDeCodigoATipoProducto(int codigoRecibido, char* pResultado);
 
-
 //ALTA producto
 int buscarLibre(eProducto lista[], int length);//busca lugar
 int buscarId(eProducto lista[], int length, int idBuscado);//pide id y se fija que no este repetido
 int elegirPaisDeOirigen();
 int elegirTipoDeProducto();
-int altaProducto(eProducto lista[], int length);
+int altaProducto(eProducto lista[], int length, int* nextId);
 
 //BAJA producto-->poner id=-1
 int bajaProducto(eProducto lista[], int length);
@@ -52,25 +70,26 @@ int bajaProducto(eProducto lista[], int length);
 //MODIFICA producto
 int modificarProducto(eProducto lista[], int length);
 
-//MenuListados
+//SubMenus
 int mostrarSubmenuListados(eProducto lista[], int length);
+
 
 //ordenamientos
 int ordenarPorPrecio(eProducto lista[], int length, int ordenCreciente);
 int ordenarPorDescripcion(eProducto lista[], int length, int ordenCreciente);
+int mostrarOrdenadoPorTipo(eProducto lista[], int length);
+int ordenarListaPorTipo(eProducto lista[], int length);
 
-int hardcodearListado(eProducto lista[], int length);
+
 
 //menu de informes
 int mostrarSubmenuInformes(eProducto lista[], int length);
 int informarProductosMasCaros(eProducto lista[], int length);
-
-
-
-int contarPorTipo(eProducto lista[], int length);
 int informarPrecioPromedioPorTipo(eProducto lista[], int length);
 
-int mostrarOrdenadoPorTipo(eProducto lista[], int length);
-int ordenarListaPorTipo(eProducto lista[], int length);
+//int contarPorTipo(eProducto lista[], int length);
+//pendientes
+//int informarTipoProductoMasElaborado(eProducto lista[], int length);
+
 
 #endif // FUNCIONESABM_H_INCLUDED
