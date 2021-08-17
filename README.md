@@ -1,4 +1,4 @@
-#Sistema de Altas, Bajas y Modificaciones
+#Sistema de Altas, Bajas y Modificaciones en Lenguaje C
 
 Cliente : "empresa comercializadora de productos necesita sistema de gestión ABM". 
 
